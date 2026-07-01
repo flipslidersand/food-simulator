@@ -1,0 +1,36 @@
+{
+  "categories": [
+    {
+      "name": "外食",
+      "color": "#ff6b6b",
+      "items": [
+        { "id": "ramen", "name": "ラーメン", "cost": 900 },
+        { "id": "gyudon", "name": "牛丼", "cost": 750 },
+        { "id": "katsudon", "name": "カツ丼", "cost": 1000 },
+        { "id": "pizza", "name": "ピザ", "cost": 1500 },
+        { "id": "burger", "name": "ハンバーガー", "cost": 600 }
+      ]
+    },
+    {
+      "name": "コンビニ弁当",
+      "color": "#ffd43b",
+      "items": [
+        { "id": "bento-standard", "name": "弁当（標準）", "cost": 500 },
+        { "id": "bento-premium", "name": "弁当（プレミアム）", "cost": 700 },
+        { "id": "onigiri-set", "name": "おにぎりセット", "cost": 400 },
+        { "id": "pasta-salad", "name": "パスタサラダ", "cost": 450 }
+      ]
+    },
+    {
+      "name": "自炊",
+      "color": "#51cf66",
+      "items": [
+        { "id": "curry", "name": "カレー", "cost": 150 },
+        { "id": "pasta", "name": "パスタ", "cost": 200 },
+        { "id": "miso-soup", "name": "味噌汁＋ご飯", "cost": 100 },
+        { "id": "egg-rice", "name": "卵かけご飯", "cost": 80 },
+        { "id": "omelet", "name": "オムレツ定食", "cost": 250 }
+      ]
+    }
+  ]
+}
