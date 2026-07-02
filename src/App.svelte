@@ -2,6 +2,7 @@
   import Calendar from './lib/Calendar.svelte'
   import Statistics from './lib/Statistics.svelte'
   import QuickSim from './lib/QuickSim.svelte'
+  import LivingCost from './lib/LivingCost.svelte'
 
   let meals = {}
 
@@ -90,6 +91,8 @@
   <Calendar bind:meals />
 
   <Statistics {meals} />
+
+  <LivingCost foodCost={totalCost} />
 
   <footer>
     <p>

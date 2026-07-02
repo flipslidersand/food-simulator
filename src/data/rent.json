@@ -1,0 +1,13 @@
+{
+  "note": "2026年時点の1K・ワンルーム相場の目安",
+  "regions": [
+    { "id": "tokyo-central", "name": "東京23区・都心（港・渋谷など）", "rent": 140000 },
+    { "id": "tokyo-23", "name": "東京23区・平均", "rent": 104000 },
+    { "id": "tokyo-east", "name": "東京23区・東部（足立・葛飾など）", "rent": 60000 },
+    { "id": "tokyo-west", "name": "東京都下（市部）", "rent": 62000 },
+    { "id": "osaka", "name": "大阪市（目安）", "rent": 60000 },
+    { "id": "national-avg", "name": "全国平均", "rent": 50000 },
+    { "id": "local-city", "name": "地方都市", "rent": 45000 },
+    { "id": "local-low", "name": "地方（鳥取・宮崎・秋田など）", "rent": 38000 }
+  ]
+}
