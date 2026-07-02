@@ -3,13 +3,9 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 export default defineConfig({
   base: "/food-simulator/",
-  plugins: [svelte({ hot: !process.env.VITEST })],
+  plugins: [svelte()],
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: [],
-    coverage: {
-      provider: "v8",
-    },
   },
 });
