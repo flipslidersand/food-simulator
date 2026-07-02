@@ -9,20 +9,33 @@
   }
 
   function exportCSV() {
-    const lines = ['日付,カテゴリ,食事,金額']
-    for (let day = 0; day < 30; day++) {
-      if (meals[day]) {
-        const { category, item, cost } = meals[day]
-        lines.push(`7月${day + 1}日,${category},${item},${cost}`)
+    try {
+      const selectedDays = Object.keys(meals).length
+      if (selectedDays === 0) {
+        alert('まずカレンダーから食事を選んでください')
+        return
       }
+
+      const lines = ['日付,カテゴリ,食事,金額']
+      for (let day = 0; day < 30; day++) {
+        if (meals[day]) {
+          const { category, item, cost } = meals[day]
+          lines.push(`7月${day + 1}日,${category},${item},${cost}`)
+        }
+      }
+
+      const csv = lines.join('\n')
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `food-simulator-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('CSV エクスポート失敗:', error)
+      alert('ファイルのダウンロードに失敗しました')
     }
-    const csv = lines.join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'food-simulator.csv'
-    a.click()
   }
 </script>
 
