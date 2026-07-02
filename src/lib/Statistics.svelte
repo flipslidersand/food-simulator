@@ -1,11 +1,17 @@
 <script>
   export let meals = {}
 
+  const mealCost = (m) => m.cost + (m.drink?.cost ?? 0)
+
   $: totalDays = 30
   $: selectedDays = Object.keys(meals).length
-  $: totalCost = Object.values(meals).reduce((sum, m) => sum + m.cost, 0)
+  $: totalCost = Object.values(meals).reduce((sum, m) => sum + mealCost(m), 0)
+  $: drinkCost = Object.values(meals).reduce(
+    (sum, m) => sum + (m.drink?.cost ?? 0),
+    0
+  )
   $: avgCost = selectedDays > 0 ? Math.round(totalCost / selectedDays) : 0
-  $: monthlyIfAllRamen = totalDays * 900
+  $: monthlyIfAllRamen = totalDays * 1000
 
   $: categoryCosts = {
     '外食': 0,
@@ -15,7 +21,7 @@
 
   $: {
     Object.values(meals).forEach(meal => {
-      categoryCosts[meal.category] += meal.cost
+      categoryCosts[meal.category] += mealCost(meal)
     })
   }
 
@@ -50,7 +56,12 @@
       <div class="stat-label">合計金額</div>
       <div class="stat-value total-cost">¥{totalCost.toLocaleString()}</div>
       {#if selectedDays > 0}
-        <div class="stat-sub">1日平均: ¥{avgCost.toLocaleString()}</div>
+        <div class="stat-sub">
+          1日平均: ¥{avgCost.toLocaleString()}
+          {#if drinkCost > 0}
+            ／ うち飲み物代: ¥{drinkCost.toLocaleString()}
+          {/if}
+        </div>
       {/if}
     </div>
 

@@ -6,8 +6,11 @@
   let meals = {}
 
   $: selectedDays = Object.keys(meals).length
-  $: totalCost = Object.values(meals).reduce((sum, m) => sum + m.cost, 0)
-  $: savings = 30 * 900 - totalCost
+  $: totalCost = Object.values(meals).reduce(
+    (sum, m) => sum + m.cost + (m.drink?.cost ?? 0),
+    0
+  )
+  $: savings = 30 * 1000 - totalCost
 
   function reset() {
     meals = {}
@@ -25,11 +28,13 @@
         return
       }
 
-      const lines = ['日付,カテゴリ,食事,金額']
+      const lines = ['日付,カテゴリ,食事,金額,飲み物,飲み物代']
       for (let day = 0; day < 30; day++) {
         if (meals[day]) {
-          const { category, item, cost } = meals[day]
-          lines.push(`7月${day + 1}日,${category},${item},${cost}`)
+          const { category, item, cost, drink } = meals[day]
+          lines.push(
+            `7月${day + 1}日,${category},${item},${cost},${drink?.name ?? ''},${drink?.cost ?? 0}`
+          )
         }
       }
 

@@ -13,6 +13,16 @@
     delete meals[day]
     meals = meals
   }
+
+  function handleDrinkSelect(day, drinkIdx) {
+    const drink = menus.drinks[drinkIdx]
+    meals[day] = { ...meals[day], drink: { name: drink.name, cost: drink.cost } }
+  }
+
+  function clearDrink(day) {
+    const { drink, ...rest } = meals[day]
+    meals[day] = rest
+  }
 </script>
 
 <div class="calendar">
@@ -26,7 +36,28 @@
         <div class="selected-meal">
           <div class="meal-category">{meals[day].category}</div>
           <div class="meal-name">{meals[day].item}</div>
-          <div class="meal-cost">¥{meals[day].cost}</div>
+          <div class="meal-cost">
+            ¥{(meals[day].cost + (meals[day].drink?.cost ?? 0)).toLocaleString()}
+          </div>
+          {#if meals[day].drink}
+            <div class="drink-selected">
+              🥤 {meals[day].drink.name} ¥{meals[day].drink.cost}
+              <button class="drink-clear" on:click={() => clearDrink(day)}>×</button>
+            </div>
+          {:else}
+            <div class="drink-select">
+              <div class="drink-label">＋飲み物</div>
+              {#each menus.drinks as drink, drinkIdx}
+                <button
+                  class="drink-btn"
+                  on:click={() => handleDrinkSelect(day, drinkIdx)}
+                  title="{drink.name} ¥{drink.cost}"
+                >
+                  {drink.name} ¥{drink.cost}
+                </button>
+              {/each}
+            </div>
+          {/if}
           <button class="clear-btn" on:click={() => clearMeal(day)}>
             ×
           </button>
@@ -194,5 +225,55 @@
 
   .menu-btn:active {
     transform: translateY(0);
+  }
+
+  .drink-selected {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .drink-clear {
+    border: none;
+    background: #ddd;
+    color: #666;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .drink-select {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .drink-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #999;
+  }
+
+  .drink-btn {
+    padding: 4px 8px;
+    border: 1px solid #74c0fc;
+    border-radius: 4px;
+    background: #e7f5ff;
+    color: #1971c2;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .drink-btn:hover {
+    background: #d0ebff;
   }
 </style>

@@ -9,13 +9,18 @@
     avg: Math.round(c.items.reduce((s, i) => s + i.cost, 0) / c.items.length),
   }))
 
+  const boughtDrinks = menus.drinks.filter((d) => d.id !== 'home-tea')
+  const drinkAvg = Math.round(
+    boughtDrinks.reduce((s, d) => s + d.cost, 0) / boughtDrinks.length
+  )
+
   let days = { 外食: 5, コンビニ弁当: 10, 自炊: 15 }
+  let drinkDays = 10
 
   $: totalDays = Object.values(days).reduce((a, b) => a + Number(b || 0), 0)
-  $: totalCost = avgCosts.reduce(
-    (s, c) => s + Number(days[c.name] || 0) * c.avg,
-    0
-  )
+  $: totalCost =
+    avgCosts.reduce((s, c) => s + Number(days[c.name] || 0) * c.avg, 0) +
+    Number(drinkDays || 0) * drinkAvg
   $: allEatOut = 30 * avgCosts.find((c) => c.name === '外食').avg
   $: savings = allEatOut - totalCost
   $: overLimit = totalDays > 30
@@ -31,6 +36,10 @@
           cost: c.avg,
         }
       }
+    }
+    const filledDays = Object.keys(meals)
+    for (let i = 0; i < Math.min(Number(drinkDays || 0), filledDays.length); i++) {
+      meals[filledDays[i]].drink = { name: '飲み物（平均）', cost: drinkAvg }
     }
     onApply(meals)
   }
@@ -54,6 +63,15 @@
         <span class="days-value">{days[c.name]}日</span>
       </div>
     {/each}
+    <div class="slider-row">
+      <div class="slider-label">
+        <span class="dot" style="background-color: #74c0fc"></span>
+        <strong>飲み物を買う日</strong>
+        <span class="avg">1本 約¥{drinkAvg}</span>
+      </div>
+      <input type="range" min="0" max="30" bind:value={drinkDays} />
+      <span class="days-value">{drinkDays}日</span>
+    </div>
   </div>
 
   <div class="sim-result" class:warning={overLimit}>
