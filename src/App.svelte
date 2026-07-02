@@ -1,11 +1,20 @@
 <script>
   import Calendar from './lib/Calendar.svelte'
   import Statistics from './lib/Statistics.svelte'
+  import QuickSim from './lib/QuickSim.svelte'
 
   let meals = {}
 
+  $: selectedDays = Object.keys(meals).length
+  $: totalCost = Object.values(meals).reduce((sum, m) => sum + m.cost, 0)
+  $: savings = 30 * 900 - totalCost
+
   function reset() {
     meals = {}
+  }
+
+  function applySimulation(newMeals) {
+    meals = newMeals
   }
 
   function exportCSV() {
@@ -46,6 +55,23 @@
       <p>外食・弁当・自炊の1ヶ月の食費をシミュレート。自炊で本当に節約できるのか見えます。</p>
     </div>
   </header>
+
+  <div class="summary-bar">
+    <div class="summary-item">
+      <span class="summary-label">入力</span>
+      <span class="summary-value">{selectedDays} / 30日</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">合計</span>
+      <span class="summary-value cost">¥{totalCost.toLocaleString()}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">毎日ラーメン比</span>
+      <span class="summary-value savings">¥{savings.toLocaleString()} おトク</span>
+    </div>
+  </div>
+
+  <QuickSim onApply={applySimulation} />
 
   <div class="controls">
     <button class="btn btn-primary" on:click={exportCSV}>
@@ -93,6 +119,44 @@
   .header-content p {
     font-size: 16px;
     opacity: 0.95;
+  }
+
+  .summary-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .summary-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .summary-label {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .summary-value {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .summary-value.cost {
+    color: #667eea;
+  }
+
+  .summary-value.savings {
+    color: #40c057;
   }
 
   .controls {
