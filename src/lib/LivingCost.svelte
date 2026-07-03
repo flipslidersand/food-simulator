@@ -1,17 +1,20 @@
 <script>
   import rentData from '../data/rent.json'
 
-  export let foodCost = 0
+  export let calendarCost = 0
+  export let quickSimCost = 0
 
   let selectedRegion = rentData.regions[5] // 全国平均
   let customRent = null
+  let foodSource = 'calendar'
   let mealsPerDay = 3
   let utilities = 13000
   let internet = 8000
   let misc = 10000
 
   $: rent = customRent ?? selectedRegion.rent
-  $: monthlyFood = foodCost * mealsPerDay
+  $: activeFoodCost = foodSource === 'calendar' ? calendarCost : quickSimCost
+  $: monthlyFood = activeFoodCost * mealsPerDay
   $: total =
     rent + monthlyFood + Number(utilities || 0) + Number(internet || 0) + Number(misc || 0)
 
@@ -53,7 +56,27 @@
     </div>
 
     <div class="input-row">
-      <label for="meals-per-day">食費の換算（カレンダーは1日1食分）</label>
+      <div class="input-label">食費の参照元</div>
+      <div class="source-toggle">
+        <button
+          class="source-btn"
+          class:active={foodSource === 'calendar'}
+          on:click={() => (foodSource = 'calendar')}
+        >
+          📅 カレンダー（¥{calendarCost.toLocaleString()}）
+        </button>
+        <button
+          class="source-btn"
+          class:active={foodSource === 'quicksim'}
+          on:click={() => (foodSource = 'quicksim')}
+        >
+          ⚡ クイックシム（¥{quickSimCost.toLocaleString()}）
+        </button>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <label for="meals-per-day">食費の換算（1日1食分 × 何食）</label>
       <div class="meal-multiplier" id="meals-per-day">
         {#each [1, 2, 3] as n}
           <button
@@ -108,7 +131,7 @@
     <div class="total-value">¥{total.toLocaleString()}</div>
     {#if monthlyFood === 0}
       <p class="hint">
-        ※ 食費が ¥0 です。カレンダーかかんたんシミュレーションで食事を選ぶと反映されます。
+        ※ 食費が ¥0 です。上の「参照元」ボタンでカレンダーかクイックシムを選んでください。
       </p>
     {/if}
   </div>
@@ -161,6 +184,36 @@
     border-radius: 6px;
     font-size: 14px;
     background: white;
+  }
+
+  .input-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+  }
+
+  .source-toggle {
+    display: flex;
+    gap: 8px;
+  }
+
+  .source-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .source-btn.active {
+    background: #51cf66;
+    color: white;
+    border-color: #51cf66;
+    font-weight: 600;
   }
 
   .meal-multiplier {

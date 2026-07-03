@@ -5,6 +5,7 @@
   import LivingCost from './lib/LivingCost.svelte'
 
   let meals = {}
+  let quickSimCost = 0
 
   $: selectedDays = Object.keys(meals).length
   $: totalCost = Object.values(meals).reduce(
@@ -77,7 +78,7 @@
     </div>
   </div>
 
-  <QuickSim onApply={applySimulation} />
+  <QuickSim onApply={applySimulation} onCostChange={(c) => (quickSimCost = c)} />
 
   <div class="controls">
     <button class="btn btn-primary" on:click={exportCSV}>
@@ -92,7 +93,7 @@
 
   <Statistics {meals} />
 
-  <LivingCost foodCost={totalCost} />
+  <LivingCost calendarCost={totalCost} {quickSimCost} />
 
   <footer>
     <p>

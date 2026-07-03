@@ -2,6 +2,7 @@
   import menus from '../data/menus.json'
 
   export let onApply = () => {}
+  export let onCostChange = () => {}
 
   const avgCosts = menus.categories.map((c) => ({
     name: c.name,
@@ -24,6 +25,7 @@
   $: allEatOut = 30 * avgCosts.find((c) => c.name === '外食').avg
   $: savings = allEatOut - totalCost
   $: overLimit = totalDays > 30
+  $: onCostChange(totalCost)
 
   function apply() {
     const meals = {}
