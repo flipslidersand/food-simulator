@@ -1,9 +1,8 @@
 <script>
   export let meals = {}
+  export let totalDays = 30
 
   const mealCost = (m) => m.cost + (m.drink?.cost ?? 0)
-
-  $: totalDays = 30
   $: selectedDays = Object.keys(meals).length
   $: totalCost = Object.values(meals).reduce((sum, m) => sum + mealCost(m), 0)
   $: drinkCost = Object.values(meals).reduce(

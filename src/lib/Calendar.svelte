@@ -2,6 +2,9 @@
   import menus from '../data/menus.json'
 
   export let meals = {}
+  export let year = 2026
+  export let month = 7
+  export let totalDays = 30
 
   function handleMealSelect(day, categoryIdx, itemIdx) {
     const category = menus.categories[categoryIdx]
@@ -26,9 +29,9 @@
 </script>
 
 <div class="calendar">
-  {#each Array(30) as _, day}
+  {#each Array(totalDays) as _, day}
     {#if day === 0}
-      <div class="month-header">7月 自炊シミュレーター</div>
+      <div class="month-header">{year}年{month}月</div>
     {/if}
     <div class="day-cell" class:selected={meals[day]}>
       <div class="day-number">{day + 1}日</div>

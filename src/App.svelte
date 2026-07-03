@@ -4,22 +4,43 @@
   import QuickSim from './lib/QuickSim.svelte'
   import LivingCost from './lib/LivingCost.svelte'
 
-  let meals = (() => {
-    try { return JSON.parse(localStorage.getItem('fs_meals') ?? '{}') } catch { return {} }
-  })()
+  function loadMeals(y, m) {
+    try { return JSON.parse(localStorage.getItem(`fs_meals_${y}-${m}`) ?? '{}') } catch { return {} }
+  }
+
+  let year = 2026
+  let month = 7
+  let meals = loadMeals(year, month)
   let quickSimCost = 0
 
+  $: totalDays = new Date(year, month, 0).getDate()
   $: selectedDays = Object.keys(meals).length
   $: totalCost = Object.values(meals).reduce(
     (sum, m) => sum + m.cost + (m.drink?.cost ?? 0),
     0
   )
-  $: savings = 30 * 1000 - totalCost
-  $: localStorage.setItem('fs_meals', JSON.stringify(meals))
+  $: savings = totalDays * 1000 - totalCost
+  $: localStorage.setItem(`fs_meals_${year}-${month}`, JSON.stringify(meals))
+
+  function switchMonth(y, m) {
+    year = y
+    month = m
+    meals = loadMeals(y, m)
+  }
+
+  function prevMonth() {
+    if (month === 1) switchMonth(year - 1, 12)
+    else switchMonth(year, month - 1)
+  }
+
+  function nextMonth() {
+    if (month === 12) switchMonth(year + 1, 1)
+    else switchMonth(year, month + 1)
+  }
 
   function reset() {
     meals = {}
-    localStorage.removeItem('fs_meals')
+    localStorage.removeItem(`fs_meals_${year}-${month}`)
   }
 
   function applySimulation(newMeals) {
@@ -39,7 +60,7 @@
         if (meals[day]) {
           const { category, item, cost, drink } = meals[day]
           lines.push(
-            `7月${day + 1}日,${category},${item},${cost},${drink?.name ?? ''},${drink?.cost ?? 0}`
+            `${month}月${day + 1}日,${category},${item},${cost},${drink?.name ?? ''},${drink?.cost ?? 0}`
           )
         }
       }
@@ -82,6 +103,23 @@
     </div>
   </div>
 
+  <div class="month-nav">
+    <button class="nav-btn" on:click={prevMonth}>‹</button>
+    <div class="month-display">
+      <select bind:value={year} on:change={() => switchMonth(year, month)}>
+        {#each [2024, 2025, 2026, 2027] as y}
+          <option value={y}>{y}年</option>
+        {/each}
+      </select>
+      <select bind:value={month} on:change={() => switchMonth(year, month)}>
+        {#each Array(12) as _, i}
+          <option value={i + 1}>{i + 1}月</option>
+        {/each}
+      </select>
+    </div>
+    <button class="nav-btn" on:click={nextMonth}>›</button>
+  </div>
+
   <QuickSim onApply={applySimulation} onCostChange={(c) => (quickSimCost = c)} />
 
   <div class="controls">
@@ -93,9 +131,9 @@
     </button>
   </div>
 
-  <Calendar bind:meals />
+  <Calendar bind:meals {year} {month} {totalDays} />
 
-  <Statistics {meals} />
+  <Statistics {meals} {totalDays} />
 
   <LivingCost calendarCost={totalCost} {quickSimCost} />
 
@@ -170,6 +208,53 @@
 
   .summary-value.savings {
     color: #40c057;
+  }
+
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 20px 20px;
+  }
+
+  .nav-btn {
+    width: 36px;
+    height: 36px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    background: white;
+    color: #667eea;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .nav-btn:hover {
+    background: #667eea;
+    color: white;
+  }
+
+  .month-display {
+    display: flex;
+    gap: 8px;
+  }
+
+  .month-display select {
+    padding: 8px 12px;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #667eea;
+    background: white;
+    cursor: pointer;
+    appearance: none;
+    text-align: center;
   }
 
   .controls {
