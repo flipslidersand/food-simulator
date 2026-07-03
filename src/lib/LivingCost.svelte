@@ -4,15 +4,24 @@
   export let calendarCost = 0
   export let quickSimCost = 0
 
-  let selectedRegion = rentData.regions[5] // 全国平均
-  let customRent = null
-  let foodSource = 'calendar'
-  let mealsPerDay = 3
-  let utilities = 13000
-  let internet = 8000
-  let misc = 10000
+  const _savedLC = (() => {
+    try { return JSON.parse(localStorage.getItem('fs_living') ?? 'null') } catch { return null }
+  })()
+  let selectedRegion = _savedLC
+    ? (rentData.regions.find((r) => r.name === _savedLC.regionName) ?? rentData.regions[5])
+    : rentData.regions[5]
+  let customRent = _savedLC?.customRent ?? null
+  let foodSource = _savedLC?.foodSource ?? 'calendar'
+  let mealsPerDay = _savedLC?.mealsPerDay ?? 3
+  let utilities = _savedLC?.utilities ?? 13000
+  let internet = _savedLC?.internet ?? 8000
+  let misc = _savedLC?.misc ?? 10000
 
   $: rent = customRent ?? selectedRegion.rent
+  $: localStorage.setItem(
+    'fs_living',
+    JSON.stringify({ regionName: selectedRegion.name, customRent, foodSource, mealsPerDay, utilities, internet, misc })
+  )
   $: activeFoodCost = foodSource === 'calendar' ? calendarCost : quickSimCost
   $: monthlyFood = activeFoodCost * mealsPerDay
   $: total =

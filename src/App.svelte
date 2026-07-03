@@ -4,7 +4,9 @@
   import QuickSim from './lib/QuickSim.svelte'
   import LivingCost from './lib/LivingCost.svelte'
 
-  let meals = {}
+  let meals = (() => {
+    try { return JSON.parse(localStorage.getItem('fs_meals') ?? '{}') } catch { return {} }
+  })()
   let quickSimCost = 0
 
   $: selectedDays = Object.keys(meals).length
@@ -13,9 +15,11 @@
     0
   )
   $: savings = 30 * 1000 - totalCost
+  $: localStorage.setItem('fs_meals', JSON.stringify(meals))
 
   function reset() {
     meals = {}
+    localStorage.removeItem('fs_meals')
   }
 
   function applySimulation(newMeals) {

@@ -15,8 +15,11 @@
     boughtDrinks.reduce((s, d) => s + d.cost, 0) / boughtDrinks.length
   )
 
-  let days = { 外食: 5, コンビニ弁当: 10, 自炊: 15 }
-  let drinkDays = 10
+  const _savedSim = (() => {
+    try { return JSON.parse(localStorage.getItem('fs_quicksim') ?? 'null') } catch { return null }
+  })()
+  let days = _savedSim?.days ?? { 外食: 5, コンビニ弁当: 10, 自炊: 15 }
+  let drinkDays = _savedSim?.drinkDays ?? 10
 
   $: totalDays = Object.values(days).reduce((a, b) => a + Number(b || 0), 0)
   $: totalCost =
@@ -26,6 +29,7 @@
   $: savings = allEatOut - totalCost
   $: overLimit = totalDays > 30
   $: onCostChange(totalCost)
+  $: localStorage.setItem('fs_quicksim', JSON.stringify({ days, drinkDays }))
 
   function apply() {
     const meals = {}
